@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SCaRR 6 November Pitch Exercise</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* Layout: one centred column. Title, wheel, topic, timer, exercise notes. */
+  :root {
+    --bg: #e9edf2;
+    --bg-glow: #f6f8fb;
+    --panel: #ffffff;
+    --ink: #17202e;
+    --muted: #5d6a7b;
+    --line: #d3d9e1;
+    --accent: #c8102e;
+    --accent-ink: #ffffff;
+    --shadow: 0 18px 40px -18px rgba(23, 32, 46, 0.35);
+    --font-body: "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "DM Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --seg1: #213a5c; --seg2: #e4eaf1; --seg3: #5d7ea6; --seg4: #f1dfe1;
+    --seg1-ink: #f4f7fb; --seg2-ink: #213a5c; --seg3-ink: #ffffff; --seg4-ink: #5c2430;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111620; --bg-glow: #1a2230; --panel: #1b2230; --ink: #e9edf3; --muted: #9aa7b8; --line: #2f3a4a;
+      --accent: #ff4f72; --accent-ink: #1a0910;
+      --shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.7);
+      --seg1: #2c4a73; --seg2: #262f3d; --seg3: #4a6c96; --seg4: #3a2a31;
+      --seg1-ink: #eef3f9; --seg2-ink: #d5deea; --seg3-ink: #f4f7fb; --seg4-ink: #f0d3d9;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111620; --bg-glow: #1a2230; --panel: #1b2230; --ink: #e9edf3; --muted: #9aa7b8; --line: #2f3a4a;
+    --accent: #ff4f72; --accent-ink: #1a0910;
+    --shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.7);
+    --seg1: #2c4a73; --seg2: #262f3d; --seg3: #4a6c96; --seg4: #3a2a31;
+    --seg1-ink: #eef3f9; --seg2-ink: #d5deea; --seg3-ink: #f4f7fb; --seg4-ink: #f0d3d9;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    background-image: radial-gradient(circle at 28% 38%, var(--bg-glow), transparent 55%);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  .page {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding-block: 36px 56px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  header { margin-bottom: 20px; text-align: center; }
+  h1 { font-size: clamp(1.9rem, 5.5vw, 3rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.05; margin: 0; text-wrap: balance; }
+
+  .grid { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+
+  /* wheel */
+  .wheel-wrap { position: relative; width: 100%; max-width: min(600px, max(320px, 66vh)); aspect-ratio: 1; }
+  canvas { width: 100%; height: 100%; display: block; }
+  .spin-btn {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: 21%; aspect-ratio: 1; border-radius: 50%;
+    border: 5px solid var(--panel); background: var(--accent); color: var(--accent-ink);
+    font: 900 clamp(0.9rem, 2.6vw, 1.2rem)/1 var(--font-body); letter-spacing: 0.04em; cursor: pointer;
+    box-shadow: 0 6px 16px -4px rgba(0, 0, 0, 0.45);
+    transition: transform 0.12s ease;
+  }
+  .spin-btn:hover:not(:disabled) { transform: translate(-50%, -50%) scale(1.05); }
+  .spin-btn:active:not(:disabled) { transform: translate(-50%, -50%) scale(0.97); }
+  .spin-btn:disabled { cursor: default; opacity: 0.8; }
+
+  /* right column */
+  .col { display: flex; flex-direction: column; gap: 16px; min-width: 0; width: 100%; max-width: 520px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px; box-shadow: var(--shadow); }
+  .card > .label { text-align: center; }
+  .label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+
+  .topic-card { width: 100%; max-width: 520px; min-height: 150px; display: flex; flex-direction: column; text-align: center; }
+  .topic { flex: 1; justify-content: center; text-align: center; font-size: clamp(1.8rem, 5vw, 2.5rem); font-weight: 900; line-height: 1.05; letter-spacing: -0.03em; margin: 0; text-wrap: balance; overflow-wrap: anywhere; display: flex; align-items: center; }
+  .topic.empty { color: var(--muted); font-weight: 500; font-size: 1.5rem; letter-spacing: -0.01em; }
+  .topic.masked { filter: blur(14px); user-select: none; }
+  .hide-btn { align-self: center; margin-top: 10px; }
+  .topic.pop { animation: pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2); }
+  @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(0.97); } to { opacity: 1; transform: none; } }
+
+  .timer { display: flex; align-items: center; justify-content: center; gap: 12px 20px; flex-wrap: wrap; }
+  .clock { font: 500 3rem/1 var(--font-mono); font-variant-numeric: tabular-nums; min-width: 4.2ch; }
+  .clock.done { color: var(--accent); }
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .bar { height: 4px; background: var(--line); border-radius: 2px; margin-top: 16px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: left; transform: scaleX(1); }
+
+  button.btn {
+    font: 500 0.95rem var(--font-body); color: var(--ink); background: transparent;
+    border: 1px solid var(--line); border-radius: 6px; padding: 8px 13px; cursor: pointer;
+  }
+  button.btn:hover { border-color: var(--ink); }
+  button.btn.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  button.btn.go { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 700; }
+  button:focus-visible, summary:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .notes { display: flex; flex-direction: column; align-items: center; gap: 14px; padding-top: 4px; }
+  .notes details { width: 100%; font-size: 0.95rem; color: var(--ink); }
+  .notes summary { cursor: pointer; text-align: center; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; list-style: none; }
+  .notes summary::-webkit-details-marker { display: none; }
+  .notes summary:hover { color: var(--ink); }
+  .notes details[open] summary { margin-bottom: 12px; }
+  .notes p { margin: 0 0 10px; max-width: 60ch; margin-inline: auto; text-align: left; }
+  .check { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--muted); }
+
+
+  @media (prefers-reduced-motion: reduce) {
+    .topic.pop { animation: none; }
+    .spin-btn { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1>SCaRR 6 November Pitch Exercise</h1>
+  </header>
+
+  <div class="grid">
+    <section class="card topic-card" aria-live="polite">
+      <p class="label">Your secret audience</p>
+      <p class="topic empty" id="topic">Spin the wheel</p>
+      <button class="btn hide-btn" type="button" id="hideBtn" hidden>Hide</button>
+    </section>
+
+    <div class="wheel-wrap">
+      <canvas id="wheel" aria-label="Wheel of audiences"></canvas>
+      <button class="spin-btn" id="spin" type="button">SPIN</button>
+    </div>
+
+    <div class="col">
+      <section class="card">
+        <p class="label">Timer</p>
+        <div class="timer">
+          <div class="clock" id="clock">15:00</div>
+          <div class="btns">
+            <button class="btn on" type="button" data-secs="900">15 min prep</button>
+            <button class="btn" type="button" data-secs="90">90 s pitch</button>
+            <button class="btn" type="button" data-secs="300">5 min turn</button>
+            <button class="btn go" type="button" id="startStop">Start</button>
+          </div>
+        </div>
+        <div class="bar"><i id="barFill"></i></div>
+      </section>
+
+      <section class="notes">
+        <details>
+          <summary>How the exercise works</summary>
+          <p>Prepare a brief pitch about your research for a specific type of audience.</p>
+          <p>In groups of four, everyone spins the wheel for a secret audience: children, friends in different fields, a grant interview or a lab meeting with peers. Keep yours to yourself.</p>
+          <p><strong>Prepare.</strong> You have 15 minutes to prepare a 90-second elevator pitch about your own Bachelor&rsquo;s thesis, written for your secret audience.</p>
+          <p><strong>Pitch.</strong> Take turns, 5 minutes each. Give your pitch. The others guess the audience and give feedback on the tone and clarity of the pitch.</p>
+          <p>We will walk around. Good luck!</p>
+        </details>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ------------------------------------------------------------------
+   AUDIENCES: edit this list to change the wheel. One entry per line.
+------------------------------------------------------------------- */
+var TOPICS = [
+  "Children",
+  "Friends in different fields",
+  "Grant interview",
+  "Lab meeting with peers"
+];
+
+(function () {
+  var canvas = document.getElementById("wheel");
+  var ctx = canvas.getContext("2d");
+  var spinBtn = document.getElementById("spin");
+  var topicEl = document.getElementById("topic");
+  var hideBtn = document.getElementById("hideBtn");
+
+  var topics = TOPICS.slice();
+  var rotation = 0;
+  var spinning = false;
+  var kick = 0; // pointer flick, in radians
+
+  function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  function size() {
+    var w = canvas.parentElement.clientWidth;
+    var d = window.devicePixelRatio || 1;
+    canvas.width = Math.round(w * d);
+    canvas.height = Math.round(w * d);
+    ctx.setTransform(d, 0, 0, d, 0, 0);
+    return w;
+  }
+
+  function draw() {
+    var w = size();
+    var cx = w / 2, cy = w / 2, pad = 22;
+    var R = w / 2 - pad;
+    ctx.clearRect(0, 0, w, w);
+    var n = topics.length;
+    if (!n) {
+      ctx.fillStyle = css("--muted");
+      ctx.font = "500 16px " + css("--font-body");
+      ctx.textAlign = "center";
+      ctx.fillText("No audiences in the list.", cx, cy);
+      return;
+    }
+    var a = (Math.PI * 2) / n;
+    var fontSize = Math.max(9, Math.min(21, R * 0.9 * a * 0.5));
+    var hubR = R * 0.23;
+    var textMax = R - hubR - 30;
+
+    // drop shadow under the wheel
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.28)";
+    ctx.shadowBlur = 30;
+    ctx.shadowOffsetY = 14;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.fillStyle = css("--panel");
+    ctx.fill();
+    ctx.restore();
+
+    for (var i = 0; i < n; i++) {
+      var s = rotation + i * a, e = s + a;
+      var k = (i % 4) + 1;
+      if (i === n - 1 && k === 1) k = 3;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, R, s, e);
+      ctx.closePath();
+      ctx.fillStyle = css("--seg" + k);
+      ctx.fill();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = css("--panel");
+      ctx.stroke();
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(s + a / 2);
+      ctx.fillStyle = css("--seg" + k + "-ink");
+      ctx.font = "600 " + fontSize + "px " + css("--font-body");
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      var words = topics[i].split(" "), lines = [], cur = "";
+      words.forEach(function (w) {
+        var test = cur ? cur + " " + w : w;
+        if (cur && ctx.measureText(test).width > textMax) { lines.push(cur); cur = w; } else { cur = test; }
+      });
+      lines.push(cur);
+      var lh = fontSize * 1.2, y0 = -((lines.length - 1) * lh) / 2;
+      lines.forEach(function (ln, li) {
+        if (ctx.measureText(ln).width > textMax) {
+          while (ln.length > 1 && ctx.measureText(ln + "…").width > textMax) ln = ln.slice(0, -1);
+          ln = ln.trimEnd() + "…";
+        }
+        ctx.fillText(ln, R - 20, y0 + li * lh);
+      });
+      ctx.restore();
+    }
+
+    // outer ring with pegs
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.lineWidth = 8;
+    ctx.strokeStyle = css("--panel");
+    ctx.stroke();
+    for (var j = 0; j < n; j++) {
+      var pa = rotation + j * a;
+      ctx.beginPath();
+      ctx.arc(cx + Math.cos(pa) * R, cy + Math.sin(pa) * R, 2.4, 0, Math.PI * 2);
+      ctx.fillStyle = css("--line");
+      ctx.fill();
+    }
+
+    // hub ring
+    ctx.beginPath();
+    ctx.arc(cx, cy, hubR + 4, 0, Math.PI * 2);
+    ctx.fillStyle = css("--panel");
+    ctx.fill();
+
+    // pointer (flicks as pegs pass)
+    ctx.save();
+    ctx.translate(cx, 14);
+    ctx.rotate(kick);
+    ctx.beginPath();
+    ctx.moveTo(-13, -10);
+    ctx.lineTo(13, -10);
+    ctx.lineTo(0, 34);
+    ctx.closePath();
+    ctx.shadowColor = "rgba(0,0,0,0.35)";
+    ctx.shadowBlur = 6;
+    ctx.shadowOffsetY = 2;
+    ctx.fillStyle = css("--accent");
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function spin() {
+    if (spinning || !topics.length) return;
+    spinning = true;
+    spinBtn.disabled = true;
+    var n = topics.length, a = (Math.PI * 2) / n, TAU = Math.PI * 2;
+    var win = Math.floor(Math.random() * n);
+    var jitter = (Math.random() - 0.5) * a * 0.7;
+    var target = -Math.PI / 2 - (win + 0.5) * a + jitter;
+    var delta = (((target - rotation) % TAU) + TAU) % TAU + TAU * (5 + Math.floor(Math.random() * 3));
+    var start = rotation, t0 = performance.now(), dur = 5200;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) dur = 1;
+    var lastPeg = Math.floor((-Math.PI / 2 - rotation) / a);
+
+    function frame(now) {
+      var p = Math.min(1, (now - t0) / dur);
+      rotation = start + delta * (1 - Math.pow(1 - p, 4));
+      var peg = Math.floor((-Math.PI / 2 - rotation) / a);
+      if (peg !== lastPeg) { kick = -0.45; lastPeg = peg; }
+      kick *= 0.82;
+      draw();
+      if (p < 1) { requestAnimationFrame(frame); return; }
+      rotation = start + delta;
+      kick = 0;
+      draw();
+      spinning = false;
+      spinBtn.disabled = false;
+      topicEl.textContent = topics[win];
+      topicEl.classList.remove("empty", "pop");
+      void topicEl.offsetWidth;
+      topicEl.classList.add("pop");
+      topicEl.classList.remove("masked");
+      hideBtn.textContent = "Hide";
+      hideBtn.hidden = false;
+    }
+    requestAnimationFrame(frame);
+  }
+
+  hideBtn.addEventListener("click", function () {
+    var masked = topicEl.classList.toggle("masked");
+    hideBtn.textContent = masked ? "Show" : "Hide";
+  });
+  spinBtn.addEventListener("click", spin);
+  document.addEventListener("keydown", function (e) {
+    if (e.code === "Space" && e.target === document.body) { e.preventDefault(); spin(); }
+  });
+  window.addEventListener("resize", draw);
+  if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+
+  // timer
+  var clock = document.getElementById("clock");
+  var startStop = document.getElementById("startStop");
+  var barFill = document.getElementById("barFill");
+  var presets = document.querySelectorAll("[data-secs]");
+  var total = 900, left = 900, tick = null, endAt = 0;
+
+  function fmt(s) { var m = Math.floor(s / 60), r = s % 60; return m + ":" + (r < 10 ? "0" : "") + r; }
+  function showClock() {
+    clock.textContent = fmt(left);
+    clock.classList.toggle("done", left === 0);
+    barFill.style.transform = "scaleX(" + (left / total) + ")";
+  }
+  function stopTimer() { clearInterval(tick); tick = null; startStop.textContent = "Start"; }
+  function beep() {
+    try {
+      var ac = new (window.AudioContext || window.webkitAudioContext)();
+      [0, 0.35].forEach(function (d) {
+        var o = ac.createOscillator(), g = ac.createGain();
+        o.frequency.value = 660; o.connect(g); g.connect(ac.destination);
+        g.gain.setValueAtTime(0.15, ac.currentTime + d);
+        g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + d + 0.3);
+        o.start(ac.currentTime + d); o.stop(ac.currentTime + d + 0.3);
+      });
+    } catch (e) {}
+  }
+  presets.forEach(function (b) {
+    b.addEventListener("click", function () {
+      stopTimer();
+      presets.forEach(function (x) { x.classList.remove("on"); });
+      b.classList.add("on");
+      total = left = parseInt(b.getAttribute("data-secs"), 10);
+      showClock();
+    });
+  });
+  startStop.addEventListener("click", function () {
+    if (tick) { stopTimer(); return; }
+    if (left === 0) left = total;
+    endAt = Date.now() + left * 1000;
+    startStop.textContent = "Stop";
+    tick = setInterval(function () {
+      left = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
+      showClock();
+      if (left === 0) { stopTimer(); beep(); }
+    }, 200);
+    showClock();
+  });
+
+  showClock();
+  draw();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+})();
+</script>
+</body>
+</html>
