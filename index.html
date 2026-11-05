@@ -150,10 +150,9 @@
       <section class="card">
         <p class="label">Timer</p>
         <div class="timer">
-          <div class="clock" id="clock">15:00</div>
+          <div class="clock" id="clock">1:30</div>
           <div class="btns">
-            <button class="btn on" type="button" data-secs="900">15 min prep</button>
-            <button class="btn" type="button" data-secs="90">90 s pitch</button>
+            <button class="btn on" type="button" data-secs="90">90 s pitch</button>
             <button class="btn" type="button" data-secs="300">5 min turn</button>
             <button class="btn go" type="button" id="startStop">Start</button>
           </div>
@@ -166,7 +165,7 @@
           <summary>How the exercise works</summary>
           <p>Prepare a brief pitch about your research for a specific type of audience.</p>
           <p>In groups of four, everyone spins the wheel for a secret audience: children, friends in different fields, a poster at a conference or a lab meeting with peers. Keep yours to yourself.</p>
-          <p><strong>Prepare.</strong> You have 15 minutes to prepare a 90-second elevator pitch about your own Bachelor&rsquo;s thesis, written for your secret audience.</p>
+          <p><strong>Prepare.</strong> You have 10 minutes to prepare a 90-second elevator pitch about your own Bachelor&rsquo;s thesis, written for your secret audience.</p>
           <p><strong>Pitch.</strong> Take turns, 5 minutes each. Give your pitch. The others guess the audience and give feedback on the tone and clarity of the pitch.</p>
           <p>We will walk around. Good luck!</p>
         </details>
@@ -366,7 +365,7 @@ var TOPICS = [
   var startStop = document.getElementById("startStop");
   var barFill = document.getElementById("barFill");
   var presets = document.querySelectorAll("[data-secs]");
-  var total = 900, left = 900, tick = null, endAt = 0;
+  var total = 90, left = 90, tick = null, endAt = 0;
 
   function fmt(s) { var m = Math.floor(s / 60), r = s % 60; return m + ":" + (r < 10 ? "0" : "") + r; }
   function showClock() {
